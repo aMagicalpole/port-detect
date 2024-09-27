@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && cp package.json ./dist",
+    "build": "vite build && npx shx cp package.json ./dist",
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
+    "sys-shim": "sys-shim",
     "pack": "npm run build && sys-shim pack --input ./dist"
   },
   "dependencies": {
@@ -16,6 +17,7 @@
     "vue": "^3.4.29"
   },
   "devDependencies": {
+    "shx": "^0.3.4",
     "@rushstack/eslint-patch": "^1.8.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vitejs/plugin-vue-jsx": "^4.0.0",
