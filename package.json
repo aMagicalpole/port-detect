@@ -1,0 +1,35 @@
+{
+  "name": "port-detect",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && cp package.json ./dist",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "format": "prettier --write src/",
+    "pack": "npm run build && sys-shim pack --input ./dist"
+  },
+  "dependencies": {
+    "element-plus": "^2.8.3",
+    "vue": "^3.4.29"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-patch": "^1.8.0",
+    "@vitejs/plugin-vue": "^5.0.5",
+    "@vitejs/plugin-vue-jsx": "^4.0.0",
+    "@vue/eslint-config-prettier": "^9.0.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-vue": "^9.23.0",
+    "prettier": "^3.2.5",
+    "sys-shim": "0.0.1-18",
+    "vite": "^5.3.1"
+  },
+  "browserArguments": "--disable-web-security --allow-running-insecure-content ",
+  "form": {
+    "right": "1300",
+    "bottom": "800"
+  },
+  "page": "./index.html"
+}
