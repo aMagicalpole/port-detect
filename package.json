@@ -9,6 +9,7 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
+    "sys-shim": "sys-shim",
     "pack": "npm run build && sys-shim pack --input ./dist"
   },
   "dependencies": {
