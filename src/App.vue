@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item label="端口号">
-        <el-input v-model="formInline.port" placeholder="请输入端口号" clearable />
+      <el-form-item label="端口号/名称">
+        <el-input v-model="formInline.port" placeholder="请输入端口号/名称" clearable />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="getPortInfo">查询</el-button>
@@ -34,21 +34,8 @@ const { port } = toRefs(formInline)
 
 const getPortInfo = async () => {
   loading.value = true
-  const data = await window.main.ws.call(`run`, [
-    `
-        var prcs = process.popen.cmd("netstat -ano") // 运行命令
-        var text = prcs.readAll() // 读取命令所有输出
-        return text // 把数据抛给 js
-    `
-  ])
-  const taskList = await window.main.ws
-    .call(`run`, [
-      `
-        var prcs = process.popen.cmd("tasklist") // 运行命令
-        var text = prcs.readAll() // 读取命令所有输出
-        return text // 把数据抛给 js
-    `
-    ])
+  const [, data] = await window.main.native.process.popen.cmd(`netstat -ano`).readAll()
+  const taskList = await window.main.native.process.popen.cmd(`tasklist`).readAll()
     .then(([, data]) => {
       const taskText = data
         .split('\r\n')
@@ -62,7 +49,7 @@ const getPortInfo = async () => {
         }, {})
       return taskText
     })
-  const list = data[1].split('\r\n').slice(2)
+  const list = data.split('\r\n').slice(2)
   columns.value = list[0].split(' ').filter(Boolean).concat('服务名称')
 
   tableData.value = list
@@ -81,8 +68,7 @@ const getPortInfo = async () => {
       if(port.value) {
         const portList = item.本地地址.split(':')
         console.log(portList);
-        
-        return portList[portList.length - 1].includes(port.value)
+        return portList[portList.length - 1].includes(port.value) || (item.服务名称 || ``).toLowerCase().includes(port.value.toLowerCase())
       } else {
         return true
       }
@@ -102,24 +88,17 @@ const handleClick = async (row) => {
     draggable: true,
   })
 
-  const data =  await window.main.ws
-    .call(`run`, [
-      `
-        var prcs = process.popen.cmd("taskkill -PID ${row.PID} -F") // 运行命令
-        var text = prcs.readAll() // 读取命令所有输出
-        return text // 把数据抛给 js
-    `
-    ])
-    if(!data[0]) {
+  const [err, message] =  await window.main.native.process.popen.cmd(`taskkill -PID ${row.PID} -F`).readAll()
+    if(!err) {
       ElMessage({
           type: 'success',
-          message: data[1],
+          message,
         })
 
     } else {
       ElMessage({
           type: 'error',
-          message: data[1],
+          message,
         })
     }
     getPortInfo()
